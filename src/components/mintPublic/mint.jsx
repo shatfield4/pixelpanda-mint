@@ -16,12 +16,14 @@ import classes from "./mint.css";
 
 import twitterLogo from './images/5296514_bird_tweet_twitter_twitter-logo_icon.svg';
 import openseaLogo from './images/logo-01.svg';
+import raritySniperLogo from './images/rarity-sniper.png';
 import pxPanLogo from './images/pxpanlogo.png';
 import pp500 from './images/pxpanlogo-p-500.png';
 import pp800 from './images/pxpanlogo-p-800.png';
 import pp1080 from './images/pxpanlogo-p-1080.png';
 import pp1600 from './images/pxpanlogo-p-1600.png';
 import pp2000 from './images/pxpanlogo.png';
+
 
 import { Grid, Oval, MutatingDots } from  'react-loader-spinner'
 import Confetti from "react-confetti";
@@ -39,6 +41,8 @@ const Mint = () => {
   const [publicPrice, setPublicPrice] = useState(2.0);
   const [totalSupply, setTotalSupply] = useState(410);
   const [maxMint, setMaxMint] = useState(8);
+
+  const mintingEnabled = true;
 
   // Handles modals
   // Processing modal
@@ -280,6 +284,18 @@ const Mint = () => {
                 className="social-icon"
               />
             </a>
+            <a
+              href="https://raritysniper.com/nft-drops-calendar"
+              target="_blank"
+              className="social-link w-inline-block"
+            >
+              <img
+                src={raritySniperLogo}
+                loading="lazy"
+                alt=""
+                className="social-icon"
+              />
+            </a>
             <a href="#" className="social-link w-inline-block">
               <img
                 src={openseaLogo}
@@ -309,26 +325,10 @@ const Mint = () => {
               alt=""
               className="big-gif"
             />
-            {/* Disconnected to wallet */}
-            <div hidden={connected === true}>
-              <div className="mint-card-connect">
-                <img
-                  src={require("./images/Emerald.gif")}
-                  loading="lazy"
-                  id="w-node-_91fb36a5-144d-af8e-7b8d-6cc5fc5ad2f1-dc4c1064"
-                  alt=""
-                  className="mint-image"
-                />
-                <br /><br />
-                <h1 className="mint-text-2">MINT NOW!</h1>
-                <br />
-                <button className="login-button" onClick={() => connectWallet()} hidden={connected}>Connect Wallet</button>
-              </div>
-            </div>
-
-            {/* Connected to wallet */}
-            <div hidden={connected === false}>
-              <div className="mint-card">
+            <div hidden={mintingEnabled === false}>
+              {/* Disconnected to wallet */}
+              <div hidden={connected === true}>
+                <div className="mint-card-connect">
                   <img
                     src={require("./images/Emerald.gif")}
                     loading="lazy"
@@ -336,126 +336,148 @@ const Mint = () => {
                     alt=""
                     className="mint-image"
                   />
+                  <br /><br />
                   <h1 className="mint-text-2">MINT NOW!</h1>
+                  <br />
                   <button className="login-button" onClick={() => connectWallet()} hidden={connected}>Connect Wallet</button>
-                  <h1 className="heading-2" hidden={connected === false}>{count}</h1>
-                  <span className="plus-minus-buttons">
-                    <button className="plus-button" hidden={connected === false} onClick={() => onPlusClicked()}>+</button>
-                    <button className="minus-button" hidden={connected === false} onClick={() => onMinusClicked()}>-</button>
-                  </span>
-                  <button className="mint-button" onClick={() => mint()} hidden={connected === false}>Mint</button>
-                  <div hidden={connected === false}>
-                    <h1 className="mint-text-4">Total cost:<br></br><br></br> 50% Chance Free + Gas</h1>
-                    <h1 className="mint-text-4">50% Chance 0.01 ETH + Gas</h1>
+                </div>
+              </div>
+
+              {/* Connected to wallet */}
+              <div hidden={connected === false}>
+                <div className="mint-card">
+                    <img
+                      src={require("./images/Emerald.gif")}
+                      loading="lazy"
+                      id="w-node-_91fb36a5-144d-af8e-7b8d-6cc5fc5ad2f1-dc4c1064"
+                      alt=""
+                      className="mint-image"
+                    />
+                    <h1 className="mint-text-2">MINT NOW!</h1>
+                    <button className="login-button" onClick={() => connectWallet()} hidden={connected}>Connect Wallet</button>
+                    <h1 className="heading-2" hidden={connected === false}>{count}</h1>
+                    <span className="plus-minus-buttons">
+                      <button className="plus-button" hidden={connected === false} onClick={() => onPlusClicked()}>+</button>
+                      <button className="minus-button" hidden={connected === false} onClick={() => onMinusClicked()}>-</button>
+                    </span>
+                    <button className="mint-button" onClick={() => mint()} hidden={connected === false}>Mint</button>
+                    <div hidden={connected === false}>
+                      <h1 className="mint-text-4">Total cost:<br></br><br></br> 50% Chance Free + Gas</h1>
+                      <h1 className="mint-text-4">50% Chance 0.01 ETH + Gas</h1>
+                    </div>
+                    <span className="disconnect-container">
+                      <button className="disconnect-button" onClick={() => disconnect()} hidden={connected === false}>Disconnect</button>
+                    </span>
                   </div>
-                  <span className="disconnect-container">
-                    <button className="disconnect-button" onClick={() => disconnect()} hidden={connected === false}>Disconnect</button>
-                  </span>
-                </div>
+              </div>
+            
+            {/* Minting in progress modal */}
+            <div>
+              <Modal
+                open={isMinting}
+                onClose={handleCloseMinting}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+              >
+                <Box sx={style}>
+                <div className="modal-image">
+                  <h1 className="mint-text-1">Minting your Pixel Pandas!</h1>
+                  
+                    <img
+                      src={require("./images/pxgif.gif")}
+                      loading="lazy"
+                      id="w-node-_91fb36a5-144d-af8e-7b8d-6cc5fc5ad2f1-dc4c1064"
+                      alt=""
+                      className="mint-image"
+                    />
+                  <div className="spinner-container">
+                    <MutatingDots 
+                      height="100"
+                      width="100"
+                      color="red"
+                      secondaryColor= 'white'
+                      radius='12.5'
+                      ariaLabel="mutating-dots-loading"
+                      wrapperStyle={{}}
+                      wrapperClass=""
+                      visible={true}
+                    />
+                  </div>
+                  <br />
+                  <h1 className="mint-text-3">Waiting for blockchain confirmation...</h1>
+                  </div>
+                </Box>
+              </Modal>
             </div>
-          
-          {/* Minting in progress modal */}
-          <div>
-            <Modal
-              open={isMinting}
-              onClose={handleCloseMinting}
-              aria-labelledby="modal-modal-title"
-              aria-describedby="modal-modal-description"
-            >
-              <Box sx={style}>
-              <div className="modal-image">
-                <h1 className="mint-text-1">Minting your Pixel Pandas!</h1>
-                
-                  <img
-                    src={require("./images/pxgif.gif")}
-                    loading="lazy"
-                    id="w-node-_91fb36a5-144d-af8e-7b8d-6cc5fc5ad2f1-dc4c1064"
-                    alt=""
-                    className="mint-image"
-                  />
-                <div className="spinner-container">
-                  <MutatingDots 
-                    height="100"
-                    width="100"
-                    color="red"
-                    secondaryColor= 'white'
-                    radius='12.5'
-                    ariaLabel="mutating-dots-loading"
-                    wrapperStyle={{}}
-                    wrapperClass=""
-                    visible={true}
-                  />
-                </div>
-                <br />
-                <h1 className="mint-text-3">Waiting for blockchain confirmation...</h1>
-                </div>
-              </Box>
-            </Modal>
-          </div>
 
-          {/* Minting free mint success */}
-          
-          <div>
-          <Confetti height={4000} run={showFreeMint} hidden={showFreeMint === false}/>
-            <Modal
-              open={showFreeMint}
-              onClose={handleCloseFreeMint}
-              aria-labelledby="modal-modal-title"
-              aria-describedby="modal-modal-description"
-            >
-              
-              <Box sx={style}>
-              
-              <div className="modal-image">
-                <h1 className="mint-text-1">Winner!</h1>
+            {/* Minting free mint success */}
+            
+            <div>
+            <Confetti height={4000} run={showFreeMint} hidden={showFreeMint === false}/>
+              <Modal
+                open={showFreeMint}
+                onClose={handleCloseFreeMint}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+              >
                 
-                  <img
-                    src={require("./images/Win.gif")}
-                    loading="lazy"
-                    id="w-node-_91fb36a5-144d-af8e-7b8d-6cc5fc5ad2f1-dc4c1064"
-                    alt=""
-                    className="mint-image-1"
-                  />
-                <br />
-                <h1 className="mint-text-3">{amtFree} of your Pixel Pandas were free, but you ended up paying {amtPaid * 0.01} ETH!</h1>
-                <button className="close-button" onClick={() => handleCloseFreeMint()}>close</button>
-                </div>
-              </Box>
-            </Modal>
-          </div>
+                <Box sx={style}>
+                
+                <div className="modal-image">
+                  <h1 className="mint-text-1">Winner!</h1>
+                  
+                    <img
+                      src={require("./images/Win.gif")}
+                      loading="lazy"
+                      id="w-node-_91fb36a5-144d-af8e-7b8d-6cc5fc5ad2f1-dc4c1064"
+                      alt=""
+                      className="mint-image-1"
+                    />
+                  <br />
+                  <h1 className="mint-text-3">{amtFree} of your Pixel Pandas were free, but you ended up paying {amtPaid * 0.01} ETH!</h1>
+                  <button className="close-button" onClick={() => handleCloseFreeMint()}>close</button>
+                  </div>
+                </Box>
+              </Modal>
+            </div>
 
-         {/* Minting paid success */}
-          
-         <div>
-            <Modal
-              open={showPaidMint}
-              onClose={handleClosePaidMint}
-              aria-labelledby="modal-modal-title"
-              aria-describedby="modal-modal-description"
-            >
-              
-              <Box sx={style}>
-              
-              <div className="modal-image">
-                <h1 className="mint-text-1">Loser!</h1>
+          {/* Minting paid success */}
+            
+          <div>
+              <Modal
+                open={showPaidMint}
+                onClose={handleClosePaidMint}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+              >
                 
-                  <img
-                    src={require("./images/Lose.gif")}
-                    loading="lazy"
-                    id="w-node-_91fb36a5-144d-af8e-7b8d-6cc5fc5ad2f1-dc4c1064"
-                    alt=""
-                    className="mint-image-1"
-                  />
-                <br />
-                <h1 className="mint-text-3">{amtFree} of your Pixel Pandas were free, but you ended up paying {amtPaid * 0.01} ETH!</h1>
-                <button className="close-button" onClick={() => handleClosePaidMint()}>close</button>
-                </div>
-              </Box>
-            </Modal>
-          </div>
+                <Box sx={style}>
+                
+                <div className="modal-image">
+                  <h1 className="mint-text-1">Loser!</h1>
+                  
+                    <img
+                      src={require("./images/Lose.gif")}
+                      loading="lazy"
+                      id="w-node-_91fb36a5-144d-af8e-7b8d-6cc5fc5ad2f1-dc4c1064"
+                      alt=""
+                      className="mint-image-1"
+                    />
+                  <br />
+                  <h1 className="mint-text-3">{amtFree} of your Pixel Pandas were free, but you ended up paying {amtPaid * 0.01} ETH!</h1>
+                  <button className="close-button" onClick={() => handleClosePaidMint()}>close</button>
+                  </div>
+                </Box>
+              </Modal>
+            </div>
+            </div>
+            
 
           <div className="w-container" />
           </div>
+        </div>
+        <div className="legendary-container">
+          <h1 className="heading-2">Minting August 8,< br/>5PM PST!</h1>
         </div>
         <div className="legendary-container">
           <h1 className="heading-2">LEGENDARY Auction: TBA</h1>
@@ -522,7 +544,7 @@ const Mint = () => {
         </div>
       </div>
       <div className="faq-section">
-        <a href="#" className="button w-button">
+        <a className="button w-button">
           {" "}
           FAQ's{" "}
         </a>
@@ -532,12 +554,6 @@ const Mint = () => {
               <div className="faq-hold">
                 <div className="faq-qstn">
                   <h3 className="h3-heading h3-faq">What's tHIS?</h3>
-                  <img
-                    src={require("./images/arrow.svg")}
-                    loading="lazy"
-                    alt=""
-                    className="faq-icon"
-                  />
                 </div>
                 <div className="faq-ans">
                   <div className="faq-ans-ins">
@@ -570,12 +586,6 @@ const Mint = () => {
                   <h3 className="h3-heading h3-faq">
                     WHO CREATED PIXELPANDAS?
                   </h3>
-                  <img
-                    src={require("./images/arrow.svg")}
-                    loading="lazy"
-                    alt=""
-                    className="faq-icon"
-                  />
                 </div>
                 <div className="faq-ans">
                   <p className="para faq-para">
@@ -591,8 +601,8 @@ const Mint = () => {
                     </strong>
                     <br />
                   </p>
-                  <div className="columns-images">
-                    <div className="w-col">
+                  <div className="columns w-row">
+                    <div className="w-col w-col-4">
                       <img
                         src={require('./images/Panda.jpg')}
                         loading="lazy"
@@ -609,7 +619,7 @@ const Mint = () => {
                         <span className="text-span-2">AKA @NFTDennis</span>
                       </h2>
                     </div>
-                    <div className="w-col">
+                    <div className="w-col w-col-4">
                       <img
                         src={require('./images/Pink-Panda.jpg')}
                         loading="lazy"
@@ -624,7 +634,7 @@ const Mint = () => {
                         <span className="text-span-2">AKA Krystal</span>
                       </h2>
                     </div>
-                    <div className="w-col">
+                    <div className="w-col w-col-4">
                       <img
                         src={require('./images/Punk-Panda.jpg')}
                         loading="lazy"
@@ -647,12 +657,6 @@ const Mint = () => {
                   <h3 className="h3-heading h3-faq">
                     How many pixel pandas are there?
                   </h3>
-                  <img
-                    src={require("./images/arrow.svg")}
-                    loading="lazy"
-                    alt=""
-                    className="faq-icon"
-                  />
                 </div>
                 <div className="faq-ans">
                 <p className="para faq-para">
@@ -669,12 +673,6 @@ const Mint = () => {
               <div className="faq-hold">
                 <div className="faq-qstn">
                   <h3 className="h3-heading h3-faq">50% CHANCE Free MINT?</h3>
-                  <img
-                    src={require("./images/arrow.svg")}
-                    loading="lazy"
-                    alt=""
-                    className="faq-icon"
-                  />
                 </div>
                 <div className="faq-ans">
                 <p className="para faq-para">
@@ -700,12 +698,6 @@ const Mint = () => {
                   <h3 className="h3-heading h3-faq">
                     WHAT IS THE ROYALTY FEE?
                   </h3>
-                  <img
-                    src={require("./images/arrow.svg")}
-                    loading="lazy"
-                    alt=""
-                    className="faq-icon"
-                  />
                 </div>
                 <div className="faq-ans">
                   <p className="para faq-para">
@@ -729,12 +721,6 @@ const Mint = () => {
                   <h3 className="h3-heading h3-faq">
                     HOW TO get on the Whitelist?
                   </h3>
-                  <img
-                    src={require("./images/arrow.svg")}
-                    loading="lazy"
-                    alt=""
-                    className="faq-icon"
-                  />
                 </div>
                 <div className="faq-ans">
                   <p className="para faq-para">
@@ -747,12 +733,6 @@ const Mint = () => {
               <div className="faq-hold">
                 <div className="faq-qstn">
                   <h3 className="h3-heading h3-faq">ROADMAP?</h3>
-                  <img
-                    src={require("./images/arrow.svg")}
-                    loading="lazy"
-                    alt=""
-                    className="faq-icon"
-                  />
                 </div>
                 <div className="faq-ans">
                   <p className="para faq-para">
